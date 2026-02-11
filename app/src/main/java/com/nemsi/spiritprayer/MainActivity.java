@@ -11,6 +11,7 @@ import com.batoulapps.adhan.PrayerTimes;
 import com.batoulapps.adhan.data.DateComponents;
 
 import java.util.Date;
+import java.text.SimpleDateFormat;
 
 public class MainActivity extends AppCompatActivity {
     @Override
@@ -30,16 +31,15 @@ public class MainActivity extends AppCompatActivity {
         // 4. تشغيل المحرك لحساب المواقيت
         PrayerTimes prayerTimes = new PrayerTimes(coordinates, date, params);
 
-        // 5. عرض النتائج على الشاشة
-        TextView welcomeText = findViewById(R.id.welcomeText);
-        String results = "مواقيت الصلاة اليوم:\n\n" +
-                "الفجر: " + prayerTimes.fajr + "\n" +
-                "الظهر: " + prayerTimes.dhuhr + "\n" +
-                "العصر: " + prayerTimes.asr + "\n" +
-                "المغرب: " + prayerTimes.maghrib + "\n" +
-                "العشاء: " + prayerTimes.isha;
+        // 5. تنسيق الوقت ليصبح سهل القراءة (مثال: 05:30 PM)
+        SimpleDateFormat formatter = new SimpleDateFormat("hh:mm a");
+
+        String results = "مواقيت الصلاة بتوقيت تونس:\n\n" +
+                "🕋 الفجر: " + formatter.format(prayerTimes.fajr) + "\n" +
+                "☀️ الظهر: " + formatter.format(prayerTimes.dhuhr) + "\n" +
+                "🕌 العصر: " + formatter.format(prayerTimes.asr) + "\n" +
+                "🌅 المغرب: " + formatter.format(prayerTimes.maghrib) + "\n" +
+                "🌙 العشاء: " + formatter.format(prayerTimes.isha);
         
         welcomeText.setText(results);
-        welcomeText.setTextSize(20);
-    }
-}
+
