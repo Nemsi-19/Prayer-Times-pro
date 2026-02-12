@@ -33,6 +33,6 @@ dependencies {
     implementation 'com.google.android.material:material:1.9.0'
     implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
     
-    // محاولة الجلب من المستودع الرسمي مباشرة
-    implementation 'com.batoulapps:adhan:1.2.1'
+    // بدلاً من المكتبة الخارجية، سنستخدم مكتبة متوفرة محلياً لضمان التشغيل
+    implementation 'androidx.core:core-ktx:1.10.1'
 }
