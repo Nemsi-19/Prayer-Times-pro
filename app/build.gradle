@@ -3,7 +3,7 @@ plugins {
 }
 
 android {
-    namespace 'com.nemsi.spiritprayer'
+    namespace 'com.nemsi.spiritprayer' 
     compileSdk 33
 
     defaultConfig {
@@ -12,13 +12,27 @@ android {
         targetSdk 33
         versionCode 1
         versionName "1.0"
+
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+    }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
     }
 }
 
 dependencies {
     implementation 'androidx.appcompat:appcompat:1.6.1'
     implementation 'com.google.android.material:material:1.9.0'
-    // هذه هي النسخة الأكثر استقراراً في Maven Central
+    implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
+    
+    // محاولة الجلب من المستودع الرسمي مباشرة
     implementation 'com.batoulapps:adhan:1.2.1'
 }
-
