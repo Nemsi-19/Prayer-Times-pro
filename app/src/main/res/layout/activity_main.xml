@@ -1,44 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#004D40">
+    android:padding="16dp">
 
-    <LinearLayout
-        android:layout_width="match_parent"
+    <TextView
+        android:id="@+id/fajr_time"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:padding="20dp"
-        android:gravity="center_horizontal">
+        android:text="وقت الفجر سيظهر هنا"
+        android:textSize="24sp"
+        android:layout_centerInParent="true" />
 
-        <TextView
-            android:id="@+id/appTitle"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Prayer Times Pro"
-            android:textColor="#FFFFFF"
-            android:textSize="28sp"
-            android:textStyle="bold"
-            android:layout_marginBottom="10dp"/>
-
-        <TextView
-            android:id="@+id/locationStatus"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="📍 جاري تحديد الموقع..."
-            android:textColor="#B2DFDB"
-            android:textSize="14sp"
-            android:layout_marginBottom="30dp"/>
-
-        <TextView
-            android:id="@+id/prayerTimesText"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="@android:color/white"
-            android:padding="25dp"
-            android:textColor="#212121"
-            android:textSize="20sp"
-            android:lineSpacingExtra="12dp" />
-
-    </LinearLayout>
-</ScrollView>
+</RelativeLayout>
