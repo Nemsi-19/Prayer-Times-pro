@@ -1,3 +1,4 @@
-rootProject.name = "Prayer Times pro"
+rootProject.name = "Prayer-Times-pro"
 include ':app'
+
 
