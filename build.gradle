@@ -4,5 +4,6 @@ buildscript {
     }
 }
 
-// تم نقل المستودعات إلى settings.gradle بنجاح
- 
+task clean(type: Delete) {
+    delete rootProject.buildDir
+}
