@@ -18,5 +18,5 @@ android {
 dependencies {
     implementation 'androidx.appcompat:appcompat:1.6.1'
     implementation 'com.google.android.material:material:1.9.0'
-    implementation 'com.github.batoulapps:adhan-java:1.2.1' // لاحظ التغيير هنا لـ github
+    implementation 'com.batoulapps:adhan:1.2.1' 
 }
