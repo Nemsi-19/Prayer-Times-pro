@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">مواقيت الصلاة برو</string>
-    <string name="hello_world">مرحباً بك في تطبيق مواقيت الصلاة برو</string>
+    <string name="app_name">Prayer Times Pro</string>
+    <string name="welcome_message">أهلاً بك في تطبيق مواقيت الصلاة برو</string>
 </resources>
-
