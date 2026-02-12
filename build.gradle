@@ -4,6 +4,6 @@ buildscript {
     }
 }
 
-task clean(type: Delete) {
-    delete rootProject.buildDir
+allprojects {
+    // نترك هذا فارغاً لأننا سنعتمد على settings.gradle
 }
