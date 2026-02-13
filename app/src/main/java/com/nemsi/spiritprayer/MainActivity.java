@@ -8,7 +8,6 @@ import android.location.LocationManager;
 import android.os.Bundle;
 import android.provider.Settings;
 import android.widget.TextView;
-import android.widget.LinearLayout;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
@@ -86,33 +85,37 @@ public class MainActivity extends AppCompatActivity {
         PrayerTimes prayerTimes = new PrayerTimes(coordinates, now, CalculationMethod.MUSLIM_WORLD_LEAGUE);
         
         displayAllPrayerTimes(prayerTimes);
-        highlightNextPrayer(prayerTimes, now); // تمييز الصلاة القادمة
+        highlightNextPrayer(prayerTimes, now);
     }
 
-    private void highlightNextPrayer(PrayerTimes prayerTimes, Date now) {
-        // نحدد الصلاة القادمة
-        Prayer nextPrayer = prayerTimes.nextPrayer(now);
-        
-        // إعادة الألوان للوضع الطبيعي أولاً (أبيض)
+    private void highlightNextPrayer(PrayerTimes pt, Date now) {
         resetColors();
+        int highlightColor = Color.parseColor("#4CAF50"); // الأخضر
 
-        // تلوين الصلاة القادمة بلون مميز (أخضر فاتح)
-        switch (nextPrayer) {
-            case FAJR: ((TextView) findViewById(R.id.fajr_time)).setTextColor(Color.parseColor("#4CAF50")); break;
-            case DHUHR: ((TextView) findViewById(R.id.dhuhr_time)).setTextColor(Color.parseColor("#4CAF50")); break;
-            case ASR: ((TextView) findViewById(R.id.asr_time)).setTextColor(Color.parseColor("#4CAF50")); break;
-            case MAGHRIB: ((TextView) findViewById(R.id.maghrib_time)).setTextColor(Color.parseColor("#4CAF50")); break;
-            case ISHA: ((TextView) findViewById(R.id.isha_time)).setTextColor(Color.parseColor("#4CAF50")); break;
+        // تحديد الصلاة القادمة يدوياً بمقارنة الوقت الحالي مع أوقات الصلوات
+        if (now.before(pt.fajr)) {
+            ((TextView) findViewById(R.id.fajr_time)).setTextColor(highlightColor);
+        } else if (now.before(pt.dhuhr)) {
+            ((TextView) findViewById(R.id.dhuhr_time)).setTextColor(highlightColor);
+        } else if (now.before(pt.asr)) {
+            ((TextView) findViewById(R.id.asr_time)).setTextColor(highlightColor);
+        } else if (now.before(pt.maghrib)) {
+            ((TextView) findViewById(R.id.maghrib_time)).setTextColor(highlightColor);
+        } else if (now.before(pt.isha)) {
+            ((TextView) findViewById(R.id.isha_time)).setTextColor(highlightColor);
+        } else {
+            // إذا فات وقت العشاء، الصلاة القادمة هي فجر اليوم التالي
+            ((TextView) findViewById(R.id.fajr_time)).setTextColor(highlightColor);
         }
     }
 
     private void resetColors() {
-        int normalColor = Color.parseColor("#FFFFFF");
-        ((TextView) findViewById(R.id.fajr_time)).setTextColor(normalColor);
-        ((TextView) findViewById(R.id.dhuhr_time)).setTextColor(normalColor);
-        ((TextView) findViewById(R.id.asr_time)).setTextColor(normalColor);
-        ((TextView) findViewById(R.id.maghrib_time)).setTextColor(normalColor);
-        ((TextView) findViewById(R.id.isha_time)).setTextColor(normalColor);
+        int white = Color.parseColor("#FFFFFF");
+        ((TextView) findViewById(R.id.fajr_time)).setTextColor(white);
+        ((TextView) findViewById(R.id.dhuhr_time)).setTextColor(white);
+        ((TextView) findViewById(R.id.asr_time)).setTextColor(white);
+        ((TextView) findViewById(R.id.maghrib_time)).setTextColor(white);
+        ((TextView) findViewById(R.id.isha_time)).setTextColor(white);
     }
 
     private void displayAllPrayerTimes(PrayerTimes prayerTimes) {
@@ -124,3 +127,4 @@ public class MainActivity extends AppCompatActivity {
         ((TextView) findViewById(R.id.isha_time)).setText(formatter.format(prayerTimes.isha));
     }
 }
+ 
