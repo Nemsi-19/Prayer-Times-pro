@@ -10,16 +10,27 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="40dp"
+        android:layout_marginTop="30dp"
         android:text="مواقيت الصلاة"
         android:textColor="#FFFFFF"
-        android:textSize="28sp"
+        android:textSize="26sp"
         android:textStyle="bold" />
+
+    <TextView
+        android:id="@+id/hijri_date_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/title_text"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="5dp"
+        android:text="التاريخ الهجري"
+        android:textColor="#A0A0A0"
+        android:textSize="16sp" />
 
     <androidx.cardview.widget.CardView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@id/title_text"
+        android:layout_below="@id/hijri_date_text"
         android:layout_margin="20dp"
         app:cardBackgroundColor="#1E2A3D"
         app:cardCornerRadius="15dp"
@@ -182,3 +193,4 @@
         </LinearLayout>
     </androidx.cardview.widget.CardView>
 </RelativeLayout>
+ 
