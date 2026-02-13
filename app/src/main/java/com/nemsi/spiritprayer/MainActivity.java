@@ -18,6 +18,9 @@ import com.nemsi.spiritprayer.adhan.*;
 import java.util.Date;
 import java.text.SimpleDateFormat;
 import java.util.Locale;
+// المكتبات الجديدة للتاريخ الهجري
+import java.time.chrono.HijrahDate;
+import java.time.format.DateTimeFormatter;
 
 public class MainActivity extends AppCompatActivity {
     private FusedLocationProviderClient fusedLocationClient;
@@ -28,7 +31,29 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
+        
+        // عرض التاريخ الهجري فور تشغيل التطبيق
+        updateHijriDate();
+        
         calculateAndDisplay(36.8065, 10.1815); 
+    }
+
+    // دالة جديدة لحساب وعرض التاريخ الهجري
+    private void updateHijriDate() {
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
+            try {
+                HijrahDate hDate = HijrahDate.now();
+                // تنسيق: اليوم، اسم الشهر، السنة
+                DateTimeFormatter formatter = DateTimeFormatter.ofPattern("d MMMM yyyy", new Locale("ar"));
+                String formatted = hDate.format(formatter) + " هـ";
+                ((TextView) findViewById(R.id.hijri_date_text)).setText(formatted);
+            } catch (Exception e) {
+                ((TextView) findViewById(R.id.hijri_date_text)).setText("تعذر تحميل التاريخ");
+            }
+        } else {
+            // للأجهزة القديمة جداً التي لا تدعم java.time
+            ((TextView) findViewById(R.id.hijri_date_text)).setText(""); 
+        }
     }
 
     @Override
@@ -90,9 +115,8 @@ public class MainActivity extends AppCompatActivity {
 
     private void highlightNextPrayer(PrayerTimes pt, Date now) {
         resetColors();
-        int highlightColor = Color.parseColor("#4CAF50"); // الأخضر
+        int highlightColor = Color.parseColor("#4CAF50");
 
-        // تحديد الصلاة القادمة يدوياً بمقارنة الوقت الحالي مع أوقات الصلوات
         if (now.before(pt.fajr)) {
             ((TextView) findViewById(R.id.fajr_time)).setTextColor(highlightColor);
         } else if (now.before(pt.dhuhr)) {
@@ -104,7 +128,6 @@ public class MainActivity extends AppCompatActivity {
         } else if (now.before(pt.isha)) {
             ((TextView) findViewById(R.id.isha_time)).setTextColor(highlightColor);
         } else {
-            // إذا فات وقت العشاء، الصلاة القادمة هي فجر اليوم التالي
             ((TextView) findViewById(R.id.fajr_time)).setTextColor(highlightColor);
         }
     }
@@ -127,4 +150,3 @@ public class MainActivity extends AppCompatActivity {
         ((TextView) findViewById(R.id.isha_time)).setText(formatter.format(prayerTimes.isha));
     }
 }
- 
