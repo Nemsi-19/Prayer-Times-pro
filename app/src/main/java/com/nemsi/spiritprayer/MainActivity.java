@@ -21,6 +21,7 @@ import java.util.Locale;
 
 public class MainActivity extends AppCompatActivity {
     private FusedLocationProviderClient fusedLocationClient;
+    private boolean isDialogShowing = false; // لمنع تكرار ظهور النافذة
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -29,10 +30,14 @@ public class MainActivity extends AppCompatActivity {
 
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
         
-        // 1. عرض أوقات تونس العاصمة فوراً (خطة بديلة لضمان ظهور بيانات)
+        // عرض أوقات تونس العاصمة كاحتياط فوراً عند التشغيل
         calculateAndDisplay(36.8065, 10.1815); 
+    }
 
-        // 2. التحقق من حالة الـ GPS وطلب الصلاحيات من المستخدم
+    @Override
+    protected void onResume() {
+        super.onResume();
+        // في كل مرة يعود المستخدم للتطبيق (من الإعدادات مثلاً)، نفحص الحالة
         checkGPSService();
     }
 
@@ -44,29 +49,40 @@ public class MainActivity extends AppCompatActivity {
         }
 
         if (!isGpsEnabled) {
-            // إظهار تنبيه للمستخدم يطلب منه تفعيل الـ GPS
-            new AlertDialog.Builder(this)
-                .setTitle("تفعيل الموقع")
-                .setMessage("الـ GPS مغلق حالياً. يرجى تفعيله للحصول على مواقيت دقيقة لموقعك الحالي.")
-                .setPositiveButton("الإعدادات", (dialog, which) -> {
-                    Intent intent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
-                    startActivity(intent);
-                })
-                .setNegativeButton("إلغاء", (dialog, which) -> {
-                    dialog.dismiss();
-                    checkLocationPermission(); // محاولة طلب الصلاحية حتى لو الـ GPS مغلق
-                })
-                .setCancelable(false)
-                .show();
+            if (!isDialogShowing) {
+                showGPSDisabledDialog();
+            }
         } else {
+            // إذا كان الـ GPS يعمل، ننتقل فوراً لطلب/فحص الصلاحيات
             checkLocationPermission();
         }
+    }
+
+    private void showGPSDisabledDialog() {
+        isDialogShowing = true;
+        new AlertDialog.Builder(this)
+            .setTitle("تفعيل الموقع")
+            .setMessage("الـ GPS مغلق حالياً. يرجى تفعيله للحصول على مواقيت دقيقة لموقعك الحالي.")
+            .setPositiveButton("الإعدادات", (dialog, which) -> {
+                isDialogShowing = false;
+                Intent intent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
+                startActivity(intent);
+            })
+            .setNegativeButton("لاحقاً", (dialog, which) -> {
+                isDialogShowing = false;
+                dialog.dismiss();
+                // حتى لو رفض تفعيل الـ GPS، نحاول جلب آخر موقع مسجل إذا كانت الصلاحية موجودة
+                checkLocationPermission(); 
+            })
+            .setCancelable(false)
+            .show();
     }
 
     private void checkLocationPermission() {
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
             getLastLocation();
         } else {
+            // طلب الصلاحية إذا لم تكن موجودة
             ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 100);
         }
     }
@@ -83,7 +99,7 @@ public class MainActivity extends AppCompatActivity {
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
             fusedLocationClient.getLastLocation().addOnSuccessListener(this, location -> {
                 if (location != null) {
-                    // تحديث الأوقات بناءً على الموقع الدقيق للمستخدم فور توفره
+                    // تحديث الأوقات بناءً على الموقع الدقيق للمستخدم
                     calculateAndDisplay(location.getLatitude(), location.getLongitude());
                 }
             });
@@ -92,7 +108,6 @@ public class MainActivity extends AppCompatActivity {
 
     private void calculateAndDisplay(double lat, double lon) {
         Coordinates coordinates = new Coordinates(lat, lon);
-        // استخدام إعدادات الحساب (يمكن تطويرها لاحقاً لتشمل طرق حساب مخصصة)
         PrayerTimes prayerTimes = new PrayerTimes(coordinates, new Date(), CalculationMethod.MUSLIM_WORLD_LEAGUE);
         displayAllPrayerTimes(prayerTimes);
     }
