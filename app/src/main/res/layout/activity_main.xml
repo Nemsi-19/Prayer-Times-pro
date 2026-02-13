@@ -1,27 +1,53 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:gravity="center"
-    android:padding="20dp"
-    android:background="#F5F5F5">
+    android:background="#1A1A2E"> <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="20dp">
 
-    <TextView android:id="@+id/title" android:layout_width="wrap_content" android:layout_height="wrap_content"
-        android:text="مواقيت الصلاة" android:textSize="28sp" android:textStyle="bold" android:layout_marginBottom="30dp" />
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="مواقيت الصلاة"
+            android:textColor="#FFFFFF"
+            android:textSize="28sp"
+            android:textStyle="bold"
+            android:layout_gravity="center"
+            android:layout_marginBottom="30dp"/>
 
-    <TextView android:id="@+id/fajr_time" android:layout_width="wrap_content" android:layout_height="wrap_content"
-        android:textSize="20sp" android:layout_marginBottom="10dp" />
+        <androidx.cardview.widget.CardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:cardCornerRadius="15dp"
+            app:cardElevation="8dp"
+            android:layout_marginBottom="15dp"
+            app:cardBackgroundColor="#16213E">
+            
+            <RelativeLayout
+                android:padding="20dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+                <TextView
+                    android:id="@+id/fajr_label"
+                    android:text="الفجر"
+                    android:textColor="#E94560"
+                    android:textSize="20sp"
+                    android:textStyle="bold"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"/>
+                <TextView
+                    android:id="@+id/fajr_time"
+                    android:layout_alignParentRight="true"
+                    android:textColor="#FFFFFF"
+                    android:textSize="22sp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"/>
+            </RelativeLayout>
+        </androidx.cardview.widget.CardView>
 
-    <TextView android:id="@+id/dhuhr_time" android:layout_width="wrap_content" android:layout_height="wrap_content"
-        android:textSize="20sp" android:layout_marginBottom="10dp" />
-
-    <TextView android:id="@+id/asr_time" android:layout_width="wrap_content" android:layout_height="wrap_content"
-        android:textSize="20sp" android:layout_marginBottom="10dp" />
-
-    <TextView android:id="@+id/maghrib_time" android:layout_width="wrap_content" android:layout_height="wrap_content"
-        android:textSize="20sp" android:layout_marginBottom="10dp" />
-
-    <TextView android:id="@+id/isha_time" android:layout_width="wrap_content" android:layout_height="wrap_content"
-        android:textSize="20sp" />
-</LinearLayout>
+        </LinearLayout>
+</ScrollView>
