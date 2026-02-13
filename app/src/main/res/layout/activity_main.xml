@@ -1,98 +1,176 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#0F172A"
-    android:orientation="vertical"
-    android:padding="16dp">
+    android:background="#121B2B">
 
     <TextView
+        android:id="@+id/title_text"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:layout_marginTop="20dp"
-        android:layout_marginBottom="30dp"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="40dp"
         android:text="مواقيت الصلاة"
-        android:textColor="#F8FAFC"
+        android:textColor="#FFFFFF"
         android:textSize="28sp"
         android:textStyle="bold" />
 
     <androidx.cardview.widget.CardView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="12dp"
-        app:cardBackgroundColor="#1E293B"
-        app:cardCornerRadius="16dp"
-        app:cardElevation="4dp">
+        android:layout_below="@id/title_text"
+        android:layout_margin="20dp"
+        app:cardBackgroundColor="#1E2A3D"
+        app:cardCornerRadius="15dp"
+        app:cardElevation="8dp">
 
-        <RelativeLayout
-            android:padding="20dp"
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-            <TextView
-                android:id="@+id/fajr_label"
-                android:text="الفجر"
-                android:textColor="#38BDF8"
-                android:textSize="18sp"
-                android:textStyle="bold"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"/>
-            <TextView
-                android:id="@+id/fajr_time"
-                android:layout_alignParentRight="true"
-                android:textColor="#FFFFFF"
-                android:textSize="20sp"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"/>
-        </RelativeLayout>
-    </androidx.cardview.widget.CardView>
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="20dp">
 
-    <androidx.cardview.widget.CardView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="12dp"
-        app:cardBackgroundColor="#1E293B"
-        app:cardCornerRadius="16dp">
-        <RelativeLayout android:padding="20dp" android:layout_width="match_parent" android:layout_height="wrap_content">
-            <TextView android:text="الظهر" android:textColor="#38BDF8" android:textSize="18sp" android:textStyle="bold" android:layout_width="wrap_content" android:layout_height="wrap_content"/>
-            <TextView android:id="@+id/dhuhr_time" android:layout_alignParentRight="true" android:textColor="#FFFFFF" android:textSize="20sp" android:layout_width="wrap_content" android:layout_height="wrap_content"/>
-        </RelativeLayout>
-    </androidx.cardview.widget.CardView>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                android:padding="12dp">
+                <ImageView
+                    android:layout_width="26dp"
+                    android:layout_height="26dp"
+                    android:src="@android:drawable/ic_menu_compass" 
+                    android:tint="#FFD700" />
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:layout_marginRight="15dp"
+                    android:text="الفجر"
+                    android:textColor="#FFFFFF"
+                    android:textSize="18sp" />
+                <TextView
+                    android:id="@+id/fajr_time"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="--:--"
+                    android:textColor="#FFFFFF"
+                    android:textSize="18sp" />
+            </LinearLayout>
 
-    <androidx.cardview.widget.CardView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="12dp"
-        app:cardBackgroundColor="#1E293B"
-        app:cardCornerRadius="16dp">
-        <RelativeLayout android:padding="20dp" android:layout_width="match_parent" android:layout_height="wrap_content">
-            <TextView android:text="العصر" android:textColor="#38BDF8" android:textSize="18sp" android:textStyle="bold" android:layout_width="wrap_content" android:layout_height="wrap_content"/>
-            <TextView android:id="@+id/asr_time" android:layout_alignParentRight="true" android:textColor="#FFFFFF" android:textSize="20sp" android:layout_width="wrap_content" android:layout_height="wrap_content"/>
-        </RelativeLayout>
-    </androidx.cardview.widget.CardView>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                android:padding="12dp">
+                <ImageView
+                    android:layout_width="26dp"
+                    android:layout_height="26dp"
+                    android:src="@android:drawable/ic_menu_day"
+                    android:tint="#FF9800" />
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:layout_marginRight="15dp"
+                    android:text="الظهر"
+                    android:textColor="#FFFFFF"
+                    android:textSize="18sp" />
+                <TextView
+                    android:id="@+id/dhuhr_time"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="--:--"
+                    android:textColor="#FFFFFF"
+                    android:textSize="18sp" />
+            </LinearLayout>
 
-    <androidx.cardview.widget.CardView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="12dp"
-        app:cardBackgroundColor="#1E293B"
-        app:cardCornerRadius="16dp">
-        <RelativeLayout android:padding="20dp" android:layout_width="match_parent" android:layout_height="wrap_content">
-            <TextView android:text="المغرب" android:textColor="#38BDF8" android:textSize="18sp" android:textStyle="bold" android:layout_width="wrap_content" android:layout_height="wrap_content"/>
-            <TextView android:id="@+id/maghrib_time" android:layout_alignParentRight="true" android:textColor="#FFFFFF" android:textSize="20sp" android:layout_width="wrap_content" android:layout_height="wrap_content"/>
-        </RelativeLayout>
-    </androidx.cardview.widget.CardView>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                android:padding="12dp">
+                <ImageView
+                    android:layout_width="26dp"
+                    android:layout_height="26dp"
+                    android:src="@android:drawable/ic_menu_recent_history"
+                    android:tint="#4CAF50" />
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:layout_marginRight="15dp"
+                    android:text="العصر"
+                    android:textColor="#FFFFFF"
+                    android:textSize="18sp" />
+                <TextView
+                    android:id="@+id/asr_time"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="--:--"
+                    android:textColor="#FFFFFF"
+                    android:textSize="18sp" />
+            </LinearLayout>
 
-    <androidx.cardview.widget.CardView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        app:cardBackgroundColor="#1E293B"
-        app:cardCornerRadius="16dp">
-        <RelativeLayout android:padding="20dp" android:layout_width="match_parent" android:layout_height="wrap_content">
-            <TextView android:text="العشاء" android:textColor="#38BDF8" android:textSize="18sp" android:textStyle="bold" android:layout_width="wrap_content" android:layout_height="wrap_content"/>
-            <TextView android:id="@+id/isha_time" android:layout_alignParentRight="true" android:textColor="#FFFFFF" android:textSize="20sp" android:layout_width="wrap_content" android:layout_height="wrap_content"/>
-        </RelativeLayout>
-    </androidx.cardview.widget.CardView>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                android:padding="12dp">
+                <ImageView
+                    android:layout_width="26dp"
+                    android:layout_height="26dp"
+                    android:src="@android:drawable/ic_menu_send"
+                    android:tint="#FF5722" />
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:layout_marginRight="15dp"
+                    android:text="المغرب"
+                    android:textColor="#FFFFFF"
+                    android:textSize="18sp" />
+                <TextView
+                    android:id="@+id/maghrib_time"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="--:--"
+                    android:textColor="#FFFFFF"
+                    android:textSize="18sp" />
+            </LinearLayout>
 
-</LinearLayout>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                android:padding="12dp">
+                <ImageView
+                    android:layout_width="26dp"
+                    android:layout_height="26dp"
+                    android:src="@android:drawable/btn_star_big_on"
+                    android:tint="#9C27B0" />
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:layout_marginRight="15dp"
+                    android:text="العشاء"
+                    android:textColor="#FFFFFF"
+                    android:textSize="18sp" />
+                <TextView
+                    android:id="@+id/isha_time"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="--:--"
+                    android:textColor="#FFFFFF"
+                    android:textSize="18sp" />
+            </LinearLayout>
+
+        </LinearLayout>
+    </androidx.cardview.widget.CardView>
+</RelativeLayout>
