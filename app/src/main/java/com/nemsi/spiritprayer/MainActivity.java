@@ -5,8 +5,6 @@ import android.content.pm.PackageManager;
 import android.location.Location;
 import android.os.Bundle;
 import android.widget.TextView;
-import android.widget.Toast;
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import com.google.android.gms.location.FusedLocationProviderClient;
@@ -25,24 +23,27 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
+        
+        // 1. عرض أوقات تونس كاحتياط فوراً عند الفتح لضمان عدم بقاء الشاشة فارغة
+        calculateAndDisplay(36.8065, 10.1815); 
+
+        // 2. محاولة تحديث الأوقات بالموقع الحقيقي إذا توفرت الصلاحية
         checkLocationPermission();
     }
 
     private void checkLocationPermission() {
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 100);
-        } else {
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
             getLastLocation();
+        } else {
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 100);
         }
     }
 
     private void getLastLocation() {
         fusedLocationClient.getLastLocation().addOnSuccessListener(this, location -> {
             if (location != null) {
+                // تحديث الأوقات بناءً على الموقع الدقيق للمستخدم
                 calculateAndDisplay(location.getLatitude(), location.getLongitude());
-            } else {
-                // إذا فشل الـ GPS، نستخدم موقع تونس كاحتياط
-                calculateAndDisplay(34.0, 9.0);
             }
         });
     }
