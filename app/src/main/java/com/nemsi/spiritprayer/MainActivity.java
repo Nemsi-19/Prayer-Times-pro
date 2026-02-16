@@ -11,14 +11,21 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
-import com.nemsi.spiritprayer.adhan.*;
+
+// استيراد مكتبة Adhan بشكل كامل وصحيح
+import com.batoulapps.adhan.CalculationMethod;
+import com.batoulapps.adhan.Coordinates;
+import com.batoulapps.adhan.Prayer;
+import com.batoulapps.adhan.PrayerTimes;
+
 import java.util.Date;
 import java.util.List;
 import java.text.SimpleDateFormat;
 import java.util.Locale;
+import java.util.concurrent.TimeUnit;
 import java.time.chrono.HijrahDate;
 import java.time.format.DateTimeFormatter;
-import java.util.concurrent.TimeUnit;
+
 
 public class MainActivity extends AppCompatActivity {
     private FusedLocationProviderClient fusedLocationClient;
