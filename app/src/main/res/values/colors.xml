@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="primary">#D0BCFF</color>
+    <color name="onPrimary">#381E72</color>
+    <color name="background">#1C1B1F</color> 
+    <color name="surface">#25232A</color>    
+    <color name="onSurface">#E6E1E5</color>  
+    <color name="onSurfaceVariant">#CAC4D0</color>
+    <color name="next_prayer_highlight">#B4F0AD</color> 
+    <color name="divider_color">#49454F</color>
+</resources>
