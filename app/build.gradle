@@ -29,13 +29,19 @@ android {
 }
 
 dependencies {
-    // المكتبات الأساسية لواجهة التطبيق
+    // مكتبة أندرويد الأساسية
     implementation 'androidx.appcompat:appcompat:1.6.1'
+    
+    // مكتبة Material Design الرسمية (لتسهيل التصميم)
     implementation 'com.google.android.material:material:1.9.0'
+    
+    // مكتبة جوجل الجاهزة لجلب الموقع الجغرافي (تسهيل البرمجة)
+    implementation 'com.google.android.gms:play-services-location:21.0.1'
+    
+    // مكتبة Adhan التي نستخدمها لحساب المواقيت
+    implementation 'com.batoulapps.adhan:adhan:1.2.1'
+    
+    // مكتبات الواجهة الأساسية
     implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
     implementation 'androidx.cardview:cardview:1.0.0'
-    implementation 'com.google.android.gms:play-services-location:21.0.1'
-
-    // المكتبة المساعدة التي سنحتاجها لعمل الحسابات
-    implementation 'com.google.code.gson:gson:2.10.1'
 }
