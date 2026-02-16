@@ -9,15 +9,19 @@ import android.os.CountDownTimer;
 import android.widget.TextView;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
+
+// استيراد مكتبات Google Play Services للموقع
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
 
-// استيراد مكتبة Adhan بشكل كامل وصحيح
+// استيراد مكتبة Adhan (المواقيت) مع تحديد الفئات بدقة
 import com.batoulapps.adhan.CalculationMethod;
 import com.batoulapps.adhan.Coordinates;
 import com.batoulapps.adhan.Prayer;
 import com.batoulapps.adhan.PrayerTimes;
+import com.batoulapps.adhan.data.DateComponents;
 
+// استيراد أدوات الوقت والتاريخ
 import java.util.Date;
 import java.util.List;
 import java.text.SimpleDateFormat;
@@ -25,7 +29,6 @@ import java.util.Locale;
 import java.util.concurrent.TimeUnit;
 import java.time.chrono.HijrahDate;
 import java.time.format.DateTimeFormatter;
-
 
 public class MainActivity extends AppCompatActivity {
     private FusedLocationProviderClient fusedLocationClient;
@@ -56,7 +59,8 @@ public class MainActivity extends AppCompatActivity {
                 if (location != null) {
                     calculateAndDisplay(location.getLatitude(), location.getLongitude());
                 } else {
-                    calculateAndDisplay(34.4311, 8.7757); // إحداثيات قفصة/الرديف كمثال احتياطي
+                    // إحداثيات افتراضية في حال تعذر جلب الموقع (تونس العاصمة كمثال)
+                    calculateAndDisplay(36.8065, 10.1815);
                 }
             });
         }
@@ -64,41 +68,47 @@ public class MainActivity extends AppCompatActivity {
 
     private void calculateAndDisplay(double lat, double lon) {
         Coordinates coordinates = new Coordinates(lat, lon);
-        Date now = new Date();
-        PrayerTimes prayerTimes = new PrayerTimes(coordinates, now, CalculationMethod.MUSLIM_WORLD_LEAGUE);
+        
+        // الحل للمشكلة السابقة: تحويل التاريخ الحالي إلى DateComponents
+        DateComponents dateComponents = DateComponents.from(new Date());
+        
+        PrayerTimes prayerTimes = new PrayerTimes(coordinates, dateComponents, CalculationMethod.MUSLIM_WORLD_LEAGUE);
         
         updateCityName(lat, lon);
         displayAllPrayerTimes(prayerTimes);
         
+        // جلب الصلاة القادمة والتحقق من الوقت المتبقي
         Prayer next = prayerTimes.nextPrayer();
         Date nextDate = prayerTimes.timeForPrayer(next);
         
-        // إذا كانت صلاة العشاء قد فاتت، فالصلاة القادمة هي فجر الغد
-        if (next == Prayer.NONE) {
-            // حساب فجر الغد (تبسيطاً سنعيد الحساب في المحاولة القادمة)
+        // معالجة حالة ما بعد صلاة العشاء (الانتقال لفجر اليوم التالي)
+        if (next == Prayer.NONE || nextDate == null) {
             nextDate = new Date(System.currentTimeMillis() + 8 * 3600000); 
         }
         
-        if (nextDate != null) startCountdown(nextDate);
+        startCountdown(nextDate);
     }
 
     private void startCountdown(Date nextDate) {
         if (countDownTimer != null) countDownTimer.cancel();
+        
         long diff = nextDate.getTime() - System.currentTimeMillis();
 
         countDownTimer = new CountDownTimer(diff, 1000) {
             @Override
             public void onTick(long millis) {
-                String time = String.format(Locale.getDefault(), "%02d:%02d:%02d",
+                String timeText = String.format(Locale.getDefault(), "%02d:%02d:%02d",
                         TimeUnit.MILLISECONDS.toHours(millis),
                         TimeUnit.MILLISECONDS.toMinutes(millis) % 60,
                         TimeUnit.MILLISECONDS.toSeconds(millis) % 60);
                 
                 TextView timerTxt = findViewById(R.id.countdown_timer_text);
-                if (timerTxt != null) timerTxt.setText(time);
+                if (timerTxt != null) timerTxt.setText(timeText);
             }
             @Override
-            public void onFinish() { getLastLocation(); }
+            public void onFinish() { 
+                getLastLocation(); // إعادة التحديث عند انتهاء العد
+            }
         }.start();
     }
 
@@ -112,7 +122,10 @@ public class MainActivity extends AppCompatActivity {
                 TextView locTxt = findViewById(R.id.location_text);
                 if (locTxt != null) locTxt.setText(city);
             }
-        } catch (Exception e) {}
+        } catch (Exception e) {
+            TextView locTxt = findViewById(R.id.location_text);
+            if (locTxt != null) locTxt.setText("الموقع الحالي");
+        }
     }
 
     private void updateHijriDate() {
@@ -122,7 +135,9 @@ public class MainActivity extends AppCompatActivity {
                 DateTimeFormatter formatter = DateTimeFormatter.ofPattern("d MMMM yyyy", new Locale("ar"));
                 TextView hijriTxt = findViewById(R.id.hijri_date_text);
                 if (hijriTxt != null) hijriTxt.setText(hDate.format(formatter) + " هـ");
-            } catch (Exception e) {}
+            } catch (Exception e) {
+                // معالجة صامتة في حال فشل التاريخ الهجري
+            }
         }
     }
 
