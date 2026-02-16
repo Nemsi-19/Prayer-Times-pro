@@ -49,8 +49,7 @@ public class MainActivity extends AppCompatActivity {
                 if (location != null) {
                     calculateAndDisplay(location.getLatitude(), location.getLongitude());
                 } else {
-                    // إحداثيات افتراضية في حال فشل جلب الموقع
-                    calculateAndDisplay(36.8065, 10.1815);
+                    calculateAndDisplay(34.4311, 8.7757); // إحداثيات قفصة/الرديف كمثال احتياطي
                 }
             });
         }
@@ -64,9 +63,15 @@ public class MainActivity extends AppCompatActivity {
         updateCityName(lat, lon);
         displayAllPrayerTimes(prayerTimes);
         
-        // جلب الصلاة القادمة والعد التنازلي
         Prayer next = prayerTimes.nextPrayer();
         Date nextDate = prayerTimes.timeForPrayer(next);
+        
+        // إذا كانت صلاة العشاء قد فاتت، فالصلاة القادمة هي فجر الغد
+        if (next == Prayer.NONE) {
+            // حساب فجر الغد (تبسيطاً سنعيد الحساب في المحاولة القادمة)
+            nextDate = new Date(System.currentTimeMillis() + 8 * 3600000); 
+        }
+        
         if (nextDate != null) startCountdown(nextDate);
     }
 
@@ -81,7 +86,9 @@ public class MainActivity extends AppCompatActivity {
                         TimeUnit.MILLISECONDS.toHours(millis),
                         TimeUnit.MILLISECONDS.toMinutes(millis) % 60,
                         TimeUnit.MILLISECONDS.toSeconds(millis) % 60);
-                ((TextView) findViewById(R.id.countdown_timer_text)).setText(time);
+                
+                TextView timerTxt = findViewById(R.id.countdown_timer_text);
+                if (timerTxt != null) timerTxt.setText(time);
             }
             @Override
             public void onFinish() { getLastLocation(); }
@@ -95,27 +102,31 @@ public class MainActivity extends AppCompatActivity {
             if (addresses != null && !addresses.isEmpty()) {
                 String city = addresses.get(0).getLocality();
                 if (city == null) city = addresses.get(0).getAdminArea();
-                ((TextView) findViewById(R.id.location_text)).setText(city);
+                TextView locTxt = findViewById(R.id.location_text);
+                if (locTxt != null) locTxt.setText(city);
             }
-        } catch (Exception e) {
-            ((TextView) findViewById(R.id.location_text)).setText("موقعي الحالي");
-        }
+        } catch (Exception e) {}
     }
 
     private void updateHijriDate() {
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
-            HijrahDate hDate = HijrahDate.now();
-            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("d MMMM yyyy", new Locale("ar"));
-            ((TextView) findViewById(R.id.hijri_date_text)).setText(hDate.format(formatter) + " هـ");
+            try {
+                HijrahDate hDate = HijrahDate.now();
+                DateTimeFormatter formatter = DateTimeFormatter.ofPattern("d MMMM yyyy", new Locale("ar"));
+                TextView hijriTxt = findViewById(R.id.hijri_date_text);
+                if (hijriTxt != null) hijriTxt.setText(hDate.format(formatter) + " هـ");
+            } catch (Exception e) {}
         }
     }
 
     private void displayAllPrayerTimes(PrayerTimes pt) {
         SimpleDateFormat sdf = new SimpleDateFormat("hh:mm a", Locale.getDefault());
-        ((TextView) findViewById(R.id.fajr_time)).setText(sdf.format(pt.fajr));
-        ((TextView) findViewById(R.id.dhuhr_time)).setText(sdf.format(pt.dhuhr));
-        ((TextView) findViewById(R.id.asr_time)).setText(sdf.format(pt.asr));
-        ((TextView) findViewById(R.id.maghrib_time)).setText(sdf.format(pt.maghrib));
-        ((TextView) findViewById(R.id.isha_time)).setText(sdf.format(pt.isha));
+        if (findViewById(R.id.fajr_time) != null) {
+            ((TextView) findViewById(R.id.fajr_time)).setText(sdf.format(pt.fajr));
+            ((TextView) findViewById(R.id.dhuhr_time)).setText(sdf.format(pt.dhuhr));
+            ((TextView) findViewById(R.id.asr_time)).setText(sdf.format(pt.asr));
+            ((TextView) findViewById(R.id.maghrib_time)).setText(sdf.format(pt.maghrib));
+            ((TextView) findViewById(R.id.isha_time)).setText(sdf.format(pt.isha));
+        }
     }
 }
