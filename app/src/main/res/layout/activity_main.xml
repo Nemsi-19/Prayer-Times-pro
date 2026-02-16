@@ -3,48 +3,67 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/background"> <TextView
-        android:id="@+id/title_text"
+    android:background="@color/background">
+
+    <LinearLayout
+        android:id="@+id/header_area"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="40dp"
-        android:text="Spirit Prayer"
-        android:textColor="@color/onSurface"
-        android:textSize="28sp"
-        android:textStyle="bold" />
+        android:gravity="center"
+        android:orientation="vertical">
 
-    <TextView
-        android:id="@+id/hijri_date_text"
+        <TextView
+            android:id="@+id/location_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="جاري تحديد الموقع..."
+            android:textColor="@color/onSurface"
+            android:textSize="22sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/hijri_date_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:text="-- ---- ----"
+            android:textColor="@color/onSurfaceVariant"
+            android:textSize="15sp" />
+    </LinearLayout>
+
+    <com.google.android.material.card.MaterialCardView
+        android:id="@+id/timer_card"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@id/title_text"
+        android:layout_below="@id/header_area"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="8dp"
-        android:text="-- ---- ----"
-        android:textColor="@color/onSurfaceVariant"
-        android:textSize="16sp" />
+        android:layout_marginTop="25dp"
+        app:cardBackgroundColor="@color/primaryContainer"
+        app:cardCornerRadius="30dp"
+        app:cardElevation="0dp"
+        app:strokeWidth="0dp">
 
-    <TextView
-        android:id="@+id/location_text"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/hijri_date_text"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="8dp"
-        android:text="جاري تحديد الموقع..."
-        android:textColor="@color/next_prayer_highlight"
-        android:textSize="14sp" />
+        <TextView
+            android:id="@+id/countdown_timer_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingHorizontal="30dp"
+            android:paddingVertical="12dp"
+            android:text="00:00:00"
+            android:textColor="@color/onPrimary"
+            android:textSize="26sp"
+            android:textStyle="bold" />
+    </com.google.android.material.card.MaterialCardView>
 
     <com.google.android.material.card.MaterialCardView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@id/location_text"
+        android:layout_below="@id/timer_card"
         android:layout_margin="20dp"
-        android:layout_marginTop="30dp"
         app:cardBackgroundColor="@color/surface"
-        app:cardCornerRadius="20dp"
-        app:cardElevation="4dp"
+        app:cardCornerRadius="24dp"
         app:strokeColor="@color/divider_color"
         app:strokeWidth="1dp">
 
@@ -52,7 +71,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:padding="10dp">
+            android:padding="8dp">
 
             <LinearLayout style="@style/PrayerRowStyle">
                 <ImageView android:src="@drawable/ic_fajr" style="@style/PrayerIconStyle" />
@@ -60,7 +79,7 @@
                 <TextView android:id="@+id/fajr_time" android:text="--:--" style="@style/PrayerTimeStyle" />
             </LinearLayout>
 
-            <View android:layout_width="match_parent" android:layout_height="1dp" android:background="@color/divider_color" />
+            <View android:layout_width="match_parent" android:layout_height="1dp" android:background="@color/divider_color" android:layout_marginHorizontal="15dp" />
 
             <LinearLayout style="@style/PrayerRowStyle">
                 <ImageView android:src="@drawable/ic_dhuhr" style="@style/PrayerIconStyle" />
@@ -68,7 +87,7 @@
                 <TextView android:id="@+id/dhuhr_time" android:text="--:--" style="@style/PrayerTimeStyle" />
             </LinearLayout>
 
-            <View android:layout_width="match_parent" android:layout_height="1dp" android:background="@color/divider_color" />
+            <View android:layout_width="match_parent" android:layout_height="1dp" android:background="@color/divider_color" android:layout_marginHorizontal="15dp" />
 
             <LinearLayout style="@style/PrayerRowStyle">
                 <ImageView android:src="@drawable/ic_asr" style="@style/PrayerIconStyle" />
@@ -76,7 +95,7 @@
                 <TextView android:id="@+id/asr_time" android:text="--:--" style="@style/PrayerTimeStyle" />
             </LinearLayout>
 
-            <View android:layout_width="match_parent" android:layout_height="1dp" android:background="@color/divider_color" />
+            <View android:layout_width="match_parent" android:layout_height="1dp" android:background="@color/divider_color" android:layout_marginHorizontal="15dp" />
 
             <LinearLayout style="@style/PrayerRowStyle">
                 <ImageView android:src="@drawable/ic_maghrib" style="@style/PrayerIconStyle" />
@@ -84,7 +103,7 @@
                 <TextView android:id="@+id/maghrib_time" android:text="--:--" style="@style/PrayerTimeStyle" />
             </LinearLayout>
 
-            <View android:layout_width="match_parent" android:layout_height="1dp" android:background="@color/divider_color" />
+            <View android:layout_width="match_parent" android:layout_height="1dp" android:background="@color/divider_color" android:layout_marginHorizontal="15dp" />
 
             <LinearLayout style="@style/PrayerRowStyle">
                 <ImageView android:src="@drawable/ic_isha" style="@style/PrayerIconStyle" />
