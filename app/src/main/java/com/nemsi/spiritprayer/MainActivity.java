@@ -4,6 +4,8 @@ import android.Manifest;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
+import android.location.Address;
+import android.location.Geocoder;
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.provider.Settings;
@@ -16,9 +18,9 @@ import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
 import com.nemsi.spiritprayer.adhan.*;
 import java.util.Date;
+import java.util.List;
 import java.text.SimpleDateFormat;
 import java.util.Locale;
-// المكتبات الجديدة للتاريخ الهجري
 import java.time.chrono.HijrahDate;
 import java.time.format.DateTimeFormatter;
 
@@ -30,36 +32,54 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
         
-        // عرض التاريخ الهجري فور تشغيل التطبيق
+        // تحديث التاريخ الهجري فوراً عند التشغيل
         updateHijriDate();
         
+        // إحداثيات افتراضية (تونس) حتى يتم جلب الموقع الحقيقي
         calculateAndDisplay(36.8065, 10.1815); 
-    }
-
-    // دالة جديدة لحساب وعرض التاريخ الهجري
-    private void updateHijriDate() {
-        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
-            try {
-                HijrahDate hDate = HijrahDate.now();
-                // تنسيق: اليوم، اسم الشهر، السنة
-                DateTimeFormatter formatter = DateTimeFormatter.ofPattern("d MMMM yyyy", new Locale("ar"));
-                String formatted = hDate.format(formatter) + " هـ";
-                ((TextView) findViewById(R.id.hijri_date_text)).setText(formatted);
-            } catch (Exception e) {
-                ((TextView) findViewById(R.id.hijri_date_text)).setText("تعذر تحميل التاريخ");
-            }
-        } else {
-            // للأجهزة القديمة جداً التي لا تدعم java.time
-            ((TextView) findViewById(R.id.hijri_date_text)).setText(""); 
-        }
     }
 
     @Override
     protected void onResume() {
         super.onResume();
         checkGPSService();
+    }
+
+    // دالة جلب اسم المدينة من الإحداثيات
+    private void updateCityName(double lat, double lon) {
+        Geocoder geocoder = new Geocoder(this, Locale.getDefault());
+        try {
+            List<Address> addresses = geocoder.getFromLocation(lat, lon, 1);
+            if (addresses != null && !addresses.isEmpty()) {
+                String city = addresses.get(0).getLocality();
+                String country = addresses.get(0).getCountryName();
+                
+                // إذا لم يجد اسم المدينة (Locality) يجرب جلب اسم المحافظة (AdminArea)
+                if (city == null) city = addresses.get(0).getAdminArea();
+                
+                String locationDisplay = (city != null ? city : "موقع غير معروف") + "، " + country;
+                ((TextView) findViewById(R.id.location_text)).setText(locationDisplay);
+            }
+        } catch (Exception e) {
+            ((TextView) findViewById(R.id.location_text)).setText("الموقع محدد بالإحداثيات");
+        }
+    }
+
+    // دالة التاريخ الهجري
+    private void updateHijriDate() {
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
+            try {
+                HijrahDate hDate = HijrahDate.now();
+                DateTimeFormatter formatter = DateTimeFormatter.ofPattern("d MMMM yyyy", new Locale("ar"));
+                String formatted = hDate.format(formatter) + " هـ";
+                ((TextView) findViewById(R.id.hijri_date_text)).setText(formatted);
+            } catch (Exception e) {
+                ((TextView) findViewById(R.id.hijri_date_text)).setText("تعذر تحميل التاريخ");
+            }
+        }
     }
 
     private void checkGPSService() {
@@ -76,7 +96,7 @@ public class MainActivity extends AppCompatActivity {
         isDialogShowing = true;
         new AlertDialog.Builder(this)
             .setTitle("تفعيل الموقع")
-            .setMessage("الـ GPS مغلق حالياً. يرجى تفعيله للحصول على مواقيت دقيقة.")
+            .setMessage("الـ GPS مغلق حالياً. يرجى تفعيله للحصول على مواقيت دقيقة واسم المدينة.")
             .setPositiveButton("الإعدادات", (dialog, which) -> {
                 isDialogShowing = false;
                 startActivity(new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS));
@@ -99,7 +119,9 @@ public class MainActivity extends AppCompatActivity {
     private void getLastLocation() {
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
             fusedLocationClient.getLastLocation().addOnSuccessListener(this, location -> {
-                if (location != null) calculateAndDisplay(location.getLatitude(), location.getLongitude());
+                if (location != null) {
+                    calculateAndDisplay(location.getLatitude(), location.getLongitude());
+                }
             });
         }
     }
@@ -111,6 +133,7 @@ public class MainActivity extends AppCompatActivity {
         
         displayAllPrayerTimes(prayerTimes);
         highlightNextPrayer(prayerTimes, now);
+        updateCityName(lat, lon); // استدعاء جلب اسم المدينة
     }
 
     private void highlightNextPrayer(PrayerTimes pt, Date now) {
