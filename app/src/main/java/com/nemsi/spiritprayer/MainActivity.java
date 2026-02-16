@@ -1,17 +1,12 @@
 package com.nemsi.spiritprayer;
 
 import android.Manifest;
-import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.graphics.Color;
 import android.location.Address;
 import android.location.Geocoder;
-import android.location.LocationManager;
 import android.os.Bundle;
 import android.os.CountDownTimer;
-import android.provider.Settings;
 import android.widget.TextView;
-import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import com.google.android.gms.location.FusedLocationProviderClient;
@@ -28,7 +23,6 @@ import java.util.concurrent.TimeUnit;
 public class MainActivity extends AppCompatActivity {
     private FusedLocationProviderClient fusedLocationClient;
     private CountDownTimer countDownTimer;
-    private TextView timerTextView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,34 +30,30 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
-        // سنستخدم التاريخ الهجري ليكون مكاناً لعرض العداد أيضاً أو تحت اسم المدينة
+        
         updateHijriDate();
-        calculateAndDisplay(36.8065, 10.1815); 
+        checkLocationPermission();
     }
 
-    private void startCountdown(Date nextPrayerDate) {
-        if (countDownTimer != null) countDownTimer.cancel();
+    private void checkLocationPermission() {
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+            getLastLocation();
+        } else {
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 100);
+        }
+    }
 
-        long diffInMs = nextPrayerDate.getTime() - System.currentTimeMillis();
-
-        countDownTimer = new CountDownTimer(diffInMs, 1000) {
-            @Override
-            public void onTick(long millisUntilFinished) {
-                long hours = TimeUnit.MILLISECONDS.toHours(millisUntilFinished);
-                long minutes = TimeUnit.MILLISECONDS.toMinutes(millisUntilFinished) % 60;
-                long seconds = TimeUnit.MILLISECONDS.toSeconds(millisUntilFinished) % 60;
-
-                String timeText = String.format(Locale.getDefault(), "باقي على الصلاة القادمة: %02d:%02d:%02d", hours, minutes, seconds);
-                // تحديث نص الموقع ليظهر تحته العداد أو استبداله مؤقتاً
-                ((TextView) findViewById(R.id.location_text)).setText(timeText);
-            }
-
-            @Override
-            public void onFinish() {
-                // إعادة الحساب عند انتهاء الوقت لدخول الصلاة الجديدة
-                getLastLocation();
-            }
-        }.start();
+    private void getLastLocation() {
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+            fusedLocationClient.getLastLocation().addOnSuccessListener(this, location -> {
+                if (location != null) {
+                    calculateAndDisplay(location.getLatitude(), location.getLongitude());
+                } else {
+                    // إحداثيات افتراضية في حال فشل جلب الموقع
+                    calculateAndDisplay(36.8065, 10.1815);
+                }
+            });
+        }
     }
 
     private void calculateAndDisplay(double lat, double lon) {
@@ -71,21 +61,33 @@ public class MainActivity extends AppCompatActivity {
         Date now = new Date();
         PrayerTimes prayerTimes = new PrayerTimes(coordinates, now, CalculationMethod.MUSLIM_WORLD_LEAGUE);
         
+        updateCityName(lat, lon);
         displayAllPrayerTimes(prayerTimes);
         
-        // جلب الصلاة القادمة لتشغيل العداد عليها
-        Prayer nextPrayer = prayerTimes.nextPrayer();
-        Date nextPrayerDate = prayerTimes.timeForPrayer(nextPrayer);
-        if (nextPrayerDate != null) {
-            startCountdown(nextPrayerDate);
-        }
-
-        updateCityName(lat, lon);
+        // جلب الصلاة القادمة والعد التنازلي
+        Prayer next = prayerTimes.nextPrayer();
+        Date nextDate = prayerTimes.timeForPrayer(next);
+        if (nextDate != null) startCountdown(nextDate);
     }
 
-    // (بقية الدوال: updateCityName, updateHijriDate, checkLocationPermission إلخ تبقى كما هي في الكود السابق)
-    // سأختصر الكود هنا لسهولة النسخ، لكن تأكد من وجود الدوال السابقة لديك
-    
+    private void startCountdown(Date nextDate) {
+        if (countDownTimer != null) countDownTimer.cancel();
+        long diff = nextDate.getTime() - System.currentTimeMillis();
+
+        countDownTimer = new CountDownTimer(diff, 1000) {
+            @Override
+            public void onTick(long millis) {
+                String time = String.format(Locale.getDefault(), "%02d:%02d:%02d",
+                        TimeUnit.MILLISECONDS.toHours(millis),
+                        TimeUnit.MILLISECONDS.toMinutes(millis) % 60,
+                        TimeUnit.MILLISECONDS.toSeconds(millis) % 60);
+                ((TextView) findViewById(R.id.countdown_timer_text)).setText(time);
+            }
+            @Override
+            public void onFinish() { getLastLocation(); }
+        }.start();
+    }
+
     private void updateCityName(double lat, double lon) {
         Geocoder geocoder = new Geocoder(this, Locale.getDefault());
         try {
@@ -93,9 +95,11 @@ public class MainActivity extends AppCompatActivity {
             if (addresses != null && !addresses.isEmpty()) {
                 String city = addresses.get(0).getLocality();
                 if (city == null) city = addresses.get(0).getAdminArea();
-                // سيتم عرض اسم المدينة في العنوان أو بجانب العداد
+                ((TextView) findViewById(R.id.location_text)).setText(city);
             }
-        } catch (Exception e) {}
+        } catch (Exception e) {
+            ((TextView) findViewById(R.id.location_text)).setText("موقعي الحالي");
+        }
     }
 
     private void updateHijriDate() {
@@ -106,12 +110,12 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    private void displayAllPrayerTimes(PrayerTimes prayerTimes) {
-        SimpleDateFormat formatter = new SimpleDateFormat("hh:mm a", Locale.getDefault());
-        ((TextView) findViewById(R.id.fajr_time)).setText(formatter.format(prayerTimes.fajr));
-        ((TextView) findViewById(R.id.dhuhr_time)).setText(formatter.format(prayerTimes.dhuhr));
-        ((TextView) findViewById(R.id.asr_time)).setText(formatter.format(prayerTimes.asr));
-        ((TextView) findViewById(R.id.maghrib_time)).setText(formatter.format(prayerTimes.maghrib));
-        ((TextView) findViewById(R.id.isha_time)).setText(formatter.format(prayerTimes.isha));
+    private void displayAllPrayerTimes(PrayerTimes pt) {
+        SimpleDateFormat sdf = new SimpleDateFormat("hh:mm a", Locale.getDefault());
+        ((TextView) findViewById(R.id.fajr_time)).setText(sdf.format(pt.fajr));
+        ((TextView) findViewById(R.id.dhuhr_time)).setText(sdf.format(pt.dhuhr));
+        ((TextView) findViewById(R.id.asr_time)).setText(sdf.format(pt.asr));
+        ((TextView) findViewById(R.id.maghrib_time)).setText(sdf.format(pt.maghrib));
+        ((TextView) findViewById(R.id.isha_time)).setText(sdf.format(pt.isha));
     }
 }
