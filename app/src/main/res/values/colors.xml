@@ -2,10 +2,11 @@
 <resources>
     <color name="primary">#D0BCFF</color>
     <color name="onPrimary">#381E72</color>
-    <color name="background">#1C1B1F</color> 
-    <color name="surface">#25232A</color>    
-    <color name="onSurface">#E6E1E5</color>  
-    <color name="onSurfaceVariant">#CAC4D0</color>
-    <color name="next_prayer_highlight">#B4F0AD</color> 
-    <color name="divider_color">#49454F</color>
+    <color name="primaryContainer">#4F378B</color> <color name="background">#121B2B</color> 
+    <color name="surface">#1E2A3D</color>    
+    <color name="onSurface">#FFFFFF</color>  
+    <color name="onSurfaceVariant">#A0A0A0</color>
+
+    <color name="next_prayer_highlight">#4CAF50</color> 
+    <color name="divider_color">#2C3E50</color>
 </resources>
